@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Branch Managers</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+      --warning:#f59e0b;
+      --ok:#16a34a;
+    }
+    *{ box-sizing:border-box; font-family: Arial, sans-serif; }
+    body{ margin:0; background:var(--bg); color:var(--text); }
+    .layout{ display:flex; min-height:100vh; }
+    .sidebar{ width:260px; background:#111827; color:#fff; padding:18px; }
+    .brand{ font-size:18px; font-weight:700; margin-bottom:4px; }
+    .sidebar .sub{ font-size:12px; color:#cbd5e1; margin-bottom:18px; }
+    .nav a{ display:block; padding:10px 12px; border-radius:10px; color:#e5e7eb; text-decoration:none; margin-bottom:6px; font-weight:700; font-size:13px; }
+    .nav a:hover,.nav a.active{ background:#1f2937; color:#fff; }
+
+    .content{ flex:1; padding:22px; }
+    .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .header h1{ font-size:22px; margin:0; }
+    .header p{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .desc{ color:var(--muted); font-size:13px; margin:0 0 12px; }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#fef3c7;
+      color:#92400e;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      color:#fff;
+      background:var(--primary);
+      font-weight:600;
+      font-size:13px;
+      border:none;
+      cursor:pointer;
+      line-height:1;
+    }
+    .btn:hover{ background:var(--primary2); }
+
+    .btn-outline{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid var(--primary);
+    }
+    .btn-outline:hover{ background:#eff6ff; }
+
+    .btn-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+    table{ width:100%; border-collapse:collapse; }
+    th, td{
+      padding:10px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      font-size:13px;
+      vertical-align:top;
+    }
+    th{ background:#f1f5f9; font-weight:800; }
+
+    .small{ font-size:12px; color:var(--muted); }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+
+      <nav class="nav">
+        <a href="/">Dashboard</a>
+        <a href="/customers">Customers</a>
+        <a href="/products">Products</a>
+        <a href="/sales/new">Sales</a>
+        <a href="/purchases">Purchases List</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/movements">Stock Movements</a>
+        <a class="active" href="/branches">Branches</a>
+        <a href="/branches/managers" class="active">Managers</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <div>
+          <h1>Branch Managers</h1>
+          <p>Managers for each branch (sorted by branch number).</p>
+        </div>
+        <div class="btn-row" style="margin:0;">
+          <a class="btn btn-outline" href="/branches">Back to Branches</a>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2 style="margin:0 0 6px;">👤 Managers List</h2>
+        <p class="desc">This table shows the manager (Branch Manager) per branch.</p>
+
+        {% if error %}
+          <div class="badge" style="background:#fee2e2; color:#991b1b; margin-bottom:12px;">
+            {{ error }}
+          </div>
+        {% endif %}
+
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Branch ID</th>
+                <th>Branch</th>
+                <th>City</th>
+                <th>Manager</th>
+                <th>Phone</th>
+                <th>Salary</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for r in rows %}
+              <tr>
+                <td>{{ r.branch_id }}</td>
+                <td><b>{{ r.nameBranch }}</b></td>
+                <td>{{ r.city or '' }}</td>
+                <td>{{ r.first_name}}</td>
+                <td>{{ r.phone or '' }}</td>
+                <td>{{ "%.2f"|format(r.salary or 0) }}</td>
+                <td>
+                  <a class="btn btn-outline" href="/branches/{{ r.branch_id }}/staff">View Staff</a>
+                </td>
+              </tr>
+              {% endfor %}
+
+              {% if rows|length == 0 %}
+              <tr>
+                <td colspan="7" style="padding:12px;">
+                  <span class="badge">No managers found</span>
+                  <div class="small" style="margin-top:8px;">
+                    Make sure managers have positionStaff = <b>Branch Manager</b> and are linked to a branch.
+                  </div>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+  </div>
+</body>
+</html>

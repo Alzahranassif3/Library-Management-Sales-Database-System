@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Purchases</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --sidebar:#111827;
+    }
+
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;background:var(--bg);margin:0;color:var(--text)}
+
+    .layout{display:flex;min-height:100vh;}
+    .sidebar{
+      width:260px;
+      background:var(--sidebar);
+      color:#fff;
+      padding:18px;
+    }
+    .brand{font-size:18px;font-weight:800;margin-bottom:4px;}
+    .sidebar .sub{color:#cbd5e1;font-size:13px;margin-bottom:14px;}
+    .nav{display:flex;flex-direction:column;gap:6px;}
+    .nav a{
+      color:#cbd5e1;
+      text-decoration:none;
+      padding:10px 12px;
+      border-radius:10px;
+      font-weight:700;
+      font-size:13px;
+    }
+    .nav a:hover{background:rgba(255,255,255,.08);color:#fff;}
+    .nav a.active{background:rgba(37,99,235,.25);color:#fff;}
+
+    .content{flex:1;}
+    .wrap{max-width:1100px;margin:30px auto;padding:0 16px}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    h1{margin:0 0 12px;font-size:22px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px}
+    th{background:#f9fafb}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px}
+    .pill.draft{background:#e5e7eb;color:#374151}
+    .pill.ordered{background:#fef3c7;color:#92400e}
+    .pill.partial{background:#dbeafe;color:#1d4ed8}
+    .pill.received{background:#dcfce7;color:#166534}
+    .btn{display:inline-block;padding:8px 10px;border-radius:10px;border:1px solid var(--primary);color:var(--primary);background:#fff;text-decoration:none;font-weight:700;font-size:13px}
+    .btn:hover{background:#eff6ff}
+    .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .btn-primary:hover{background:var(--primary2)}
+    .btn-disabled{opacity:.45;pointer-events:none}
+    .row-actions{display:flex;gap:8px;flex-wrap:wrap}
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+
+      <nav class="nav">
+        <a href="/">Dashboard</a>
+        <a href="/customers">Customers</a>
+        <a href="/products">Products</a>
+        <a href="/sales/new">Sales</a>
+        <a class="active" href="/purchases">Purchases List</a>
+        <a href="/purchases/new">New Purchase</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/movements">Stock Movements</a>
+        <a href="/reports">Reports</a>
+      </nav>
+    </aside>
+
+ 
+    <main class="content">
+      <div class="wrap">
+        <div class="card">
+          <h1>📦 Purchases</h1>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Supplier</th>
+                <th>Branch</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for p in purchases %}
+              <tr>
+                <td>{{ p.purchase_id }}</td>
+                <td>{{ p.purchase_date }}</td>
+                <td>{{ p.supplier_name }}</td>
+                <td>{{ p.nameBranch }}</td>
+                <td>{{ "%.2f"|format(p.total_amount or 0) }}</td>
+
+                <td>
+                  {% set st = (p.purchase_status or 'Draft')|lower %}
+                  <span class="pill {{ st }}">{{ p.purchase_status }}</span>
+                </td>
+
+                <td>
+                  <div class="row-actions">
+                    <a class="btn" href="/purchases/view/{{ p.purchase_id }}">Details</a>
+
+                    {% if p.purchase_status in ['Draft','Received'] %}
+                      <a class="btn btn-primary btn-disabled" href="#">Receive</a>
+                    {% else %}
+                      <a class="btn btn-primary" href="/purchases/receive/{{ p.purchase_id }}">Receive</a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+
+              {% if purchases|length == 0 %}
+              <tr>
+                <td colspan="7">No purchases yet.</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>

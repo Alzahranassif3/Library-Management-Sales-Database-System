@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Product</title>
+
+  <style>
+
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+      --warning:#f59e0b;
+      --ok:#16a34a;
+    }
+
+    *{
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .layout{
+      display:flex;
+      min-height:100vh;
+    }
+
+    .sidebar{
+      width:260px;
+      background:#111827;
+      color:#fff;
+      padding:18px;
+    }
+
+    .content{
+      flex:1;
+      padding:22px;
+    }
+
+    .brand{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .sub{
+      font-size:12px;
+      color:#cbd5e1;
+      margin-bottom:18px;
+    }
+
+    .nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      color:#e5e7eb;
+      text-decoration:none;
+      margin-bottom:6px;
+    }
+
+    .nav a:hover,
+    .nav a.active{
+      background:#1f2937;
+      color:#fff;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .header h1{
+      font-size:22px;
+      margin:0;
+    }
+
+    .header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+
+    .card h2{
+      font-size:16px;
+      margin:0 0 6px;
+    }
+
+    .desc{
+      color:var(--muted);
+      font-size:13px;
+      margin:0 0 14px;
+    }
+
+    .btn{
+      padding:10px 12px;
+      border-radius:10px;
+      color:#fff;
+      background:var(--primary);
+      font-weight:600;
+      font-size:13px;
+      border:none;
+      cursor:pointer;
+      text-decoration:none;
+    }
+
+    .btn:hover{
+      background:var(--primary2);
+    }
+
+    .btn-outline{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid var(--primary);
+    }
+
+    .btn-outline:hover{
+      background:#eff6ff;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#fef3c7;
+      color:#92400e;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    input, select, textarea{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      margin-bottom:12px;
+    }
+
+    label{
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:6px;
+      display:block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+      
+  
+      <nav class="nav">
+        <a class="active" href="/">Dashboard</a>
+        <a href="/customers">Customers</a>
+        <a href="/products">Products</a>
+        <a href="/sales/new">Sales</a>
+         <a href="/purchases">Purchases List</a>
+        <a href="/purchases/new">New Purchase</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/movements">Stock Movements</a>
+        <a href="/reports">Reports</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <div>
+          <h1>Add Product</h1>
+          <p>Create a new product </p>
+        </div>
+        <span class="badge">Product</span>
+      </div>
+
+      <section class="grid">
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2>📦 Product Info</h2>
+          <p class="desc">Fill the fields then Save</p>
+
+          {% if error %}
+            <div class="badge" style="background:#fee2e2; color:#991b1b; margin-bottom:12px;">
+              {{ error }}
+            </div>
+          {% endif %}
+
+          <form method="POST" action="/products/new">
+            <input type="hidden" name="back" value="{{ back }}">
+            <input type="hidden" name="from_param" value="{{ from_param }}">
+            
+            <!-- Product Name -->
+            <label>Product Name *</label>
+            <input type="text" name="product_name" required>
+
+            <!-- SKU -->
+            <label>SKU *</label>
+            <input type="text" name="sku" required>
+
+            <!-- Purchase Price -->
+            <div>
+              <label>Purchase Price (Cost)</label>
+              <input
+               type="text"
+               name="purchase_price"
+               inputmode="decimal"
+               placeholder="e.g. 1.00"
+               required
+               >
+            </div>
+
+            <!-- Selling Price  -->
+            <div>
+              <label>Selling Price</label>
+              <input
+               type="text"
+               name="unit_price"
+               inputmode="decimal"
+               placeholder="e.g. 2.00"
+               required
+               >
+            </div>
+
+            <!-- Category -->
+            <label>Category *</label>
+            <select name="category_id" required>
+              <option value="">-- Select Category --</option>
+              {% for c in categories %}
+                <option value="{{ c.category_id }}">{{ c.nameCat }}</option>
+              {% endfor %}
+            </select>
+ 
+            <!-- Supplier -->
+            <label>Supplier *</label>
+            <select name="supplier_id" required>
+              <option value="">-- Select Supplier --</option>
+              {% for s in suppliers %}
+                <option value="{{ s.supplier_id }}">{{ s.supplier_name }}</option>
+              {% endfor %}
+            </select>
+
+            <label>Description</label>
+            <textarea name="product_description" rows="3"></textarea>
+
+            <div style="margin-top:14px;">
+              <button class="btn" type="submit">Save Product</button>
+              <a class="btn btn-outline" href="{{ back }}">Cancel</a>
+            </div>
+          </form>
+
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

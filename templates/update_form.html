@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Edit Customer</title>
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f5f7fb;
+      margin:0;
+      padding:40px;
+    }
+
+    h2{
+      margin-bottom:5px;
+    }
+
+    .info{
+      margin-bottom:15px;
+      font-size:14px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      max-width:500px;
+    }
+
+    label{
+      display:block;
+      margin-top:12px;
+      font-size:14px;
+    }
+
+    input{
+      width:100%;
+      padding:8px;
+      margin-top:4px;
+      border:1px solid #ccc;
+      border-radius:5px;
+      font-size:14px;
+    }
+
+    .actions{
+      margin-top:20px;
+    }
+
+    button{
+      background:#2f67ff;
+      color:white;
+      border:none;
+      padding:8px 16px;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:14px;
+    }
+
+    a{
+      margin-left:10px;
+      font-size:14px;
+      color:#333;
+      text-decoration:none;
+    }
+
+    a:hover{
+      text-decoration:underline;
+    }
+
+    button:hover{
+      background:#244fd1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Edit Customer</h2>
+  <p class="info">
+    Editing customer ID: <b>{{ customer.customer_id }}</b>
+  </p>
+
+  <div class="card">
+    <form method="POST" action="/customers/update/confirm">
+      <input type="hidden" name="customer_id" value="{{ customer.customer_id }}">
+
+      <label>
+        First Name
+        <input name="first_name" value="{{ customer.first_name }}" required>
+      </label>
+
+      <label>
+        Last Name
+        <input name="last_name" value="{{ customer.last_name }}" required>
+      </label>
+
+      <label>
+        Email
+        <input name="email" type="email" value="{{ customer.email }}" required>
+      </label>
+
+      <label>
+        Phone
+        <input name="phone" value="{{ customer.phone }}" required>
+      </label>
+
+      <div class="actions">
+        <button type="submit">Save Changes</button>
+        <a href="/customers/update">Cancel</a>
+        <a href="/">Home</a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

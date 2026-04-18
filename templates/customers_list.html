@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Customers</title>
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f5f7fb;
+      margin:0;
+      padding:40px;
+    }
+
+    h2{
+      margin-bottom:5px;
+    }
+
+    p{
+      color:#555;
+      margin-top:0;
+      margin-bottom:20px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      width:100%;
+      max-width:900px;
+    }
+
+    .actions{
+      margin-bottom:15px;
+    }
+
+    .actions a{
+      text-decoration:none;
+      padding:8px 14px;
+      border-radius:6px;
+      font-size:14px;
+      margin-right:8px;
+      display:inline-block;
+    }
+
+    .btn-add{
+      background:#2f67ff;
+      color:white;
+    }
+
+    .btn-back{
+      background:#eee;
+      color:#333;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th, td{
+      padding:10px;
+      text-align:left;
+      border-bottom:1px solid #ddd;
+    }
+
+    th{
+      background:#f0f2f7;
+    }
+
+    tr:hover{
+      background:#f9faff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Customers</h2>
+  <p>List of registered customers</p>
+
+  <div class="card">
+
+    <div class="actions">
+      <a href="/" class="btn-back">← Back</a>
+   
+    </div>
+
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+      </tr>
+
+      {% for c in customers %}
+      <tr>
+        <td>{{ c.customer_id }}</td>
+        <td>{{ c.first_name }}</td>
+        <td>{{ c.last_name }}</td>
+        <td>{{ c.email }}</td>
+        <td>{{ c.phone }}</td>
+      </tr>
+      {% endfor %}
+
+    </table>
+
+  </div>
+
+</body>
+</html>

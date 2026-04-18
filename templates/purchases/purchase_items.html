@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>New Purchase - Items</title>
+
+    <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+      --warning:#f59e0b;
+      --ok:#16a34a;
+    }
+
+    *{ box-sizing:border-box; font-family: Arial, sans-serif; }
+
+    body{ margin:0; background:var(--bg); color:var(--text); }
+
+    .layout{ display:flex; min-height:100vh; }
+    .sidebar{ width:260px; background:#111827; color:#fff; padding:18px; }
+    .content{ flex:1; padding:22px; }
+
+    .brand{ font-size:18px; font-weight:700; margin-bottom:4px; }
+    .sub{ font-size:12px; color:#cbd5e1; margin-bottom:18px; }
+
+    .nav a{
+      display:block; padding:10px 12px; border-radius:10px;
+      color:#e5e7eb; text-decoration:none; margin-bottom:6px;
+    }
+    .nav a:hover{ background:#1f2937; }
+    .nav a.active{ background:#1f2937; color:#fff; }
+
+    .header{
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:18px;
+    }
+    .header h1{ font-size:22px; margin:0; }
+    .header p{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+    .card h2{ font-size:16px; margin:0 0 6px; }
+    .desc{ color:var(--muted); font-size:13px; margin:0 0 14px; }
+
+    .btn{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      color:#fff;
+      background:var(--primary);
+      font-weight:600;
+      font-size:13px;
+      border:none;
+      cursor:pointer;
+    }
+    .btn:hover{ background:var(--primary2); }
+
+    .btn-outline{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid var(--primary);
+    }
+    .btn-outline:hover{ background:#eff6ff; }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#fef3c7;
+      color:#92400e;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .pill{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:700;
+    }
+    .pill.ok{ background:#dcfce7; color:#166534; }
+
+    input, select{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      margin-bottom:12px;
+    }
+    label{
+      font-size:13px;
+      font-weight:600;
+      margin-bottom:6px;
+      display:block;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout">
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">Al-Sarisi Library</div>
+        <div class="sub">Owner Dashboard</div>
+        
+    
+        <nav class="nav">
+          <a class="active" href="/">Dashboard</a>
+          <a href="/customers">Customers</a>
+          <a href="/products">Products</a>
+          <a href="/sales/new">Sales</a>
+           <a href="/purchases">Purchases List</a>
+          <a href="/purchases/new">New Purchase</a>
+          <a href="/inventory">Inventory</a>
+          <a href="/movements">Stock Movements</a>
+          <a href="/reports">Reports</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <div class="header">
+          <div>
+            <h1>New Purchase</h1>
+            <p>Step 3: Add Items</p>
+          </div>
+          <span class="badge">Step 3</span>
+        </div>
+
+        <section class="grid">
+
+          <!-- Purchase Summary -->
+          <div class="card">
+            <h2>🧾 Purchase Summary</h2>
+            <p class="desc">Supplier & branch info.</p>
+
+            <p><b>Purchase ID:</b> {{ purchase_id }}</p>
+            <p><b>Supplier:</b> {{ supplier_name }}</p>
+            <p><b>Branch:</b> {{ branch_name }}</p>
+
+            <div class="btn-row" style="margin-top:12px;">
+              <a class="btn btn-outline" href="/purchases/header">Back to Step 2</a>
+            </div>
+          </div>
+
+          <!-- Find Product -->
+          <div class="card" style="grid-column: 1 / -1;">
+            <h2>🔎 Find Product</h2>
+            <p class="desc">Search by product name or SKU, then enter Qty and click Add.</p>
+
+            <!-- Search form -->
+            <form method="GET" action="/purchases/items">
+              <label style="display:block; font-weight:700; margin-bottom:6px;">Search</label>
+              <input
+                type="text"
+                name="search"
+                placeholder="e.g. pen, notebook, ST-002"
+                value="{{ search or '' }}"
+                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:10px;"
+              >
+
+              <div class="btn-row" style="margin-top:12px;">
+                <button class="btn" type="submit">Search</button>
+                <a class="btn btn-outline" href="/purchases/items">Clear</a>
+                <a class="btn btn-outline" href="/products/new?from=purchase&back=/purchases/items">
+                  + Add Product
+                </a>
+              </div>
+            </form>
+
+            <!-- Results -->
+            {% if search %}
+              <div style="overflow:auto; margin-top:14px;">
+                <table style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="text-align:left; border-bottom:1px solid var(--border);">
+                      <th style="padding:10px;">ID</th>
+                      <th style="padding:10px;">Name</th>
+                      <th style="padding:10px;">SKU</th>
+                      <th style="padding:10px;">Purchase Price</th>
+                      <th style="padding:10px; width:180px;">Selling Price</th>
+                      <th style="padding:10px; width:140px;">Qty</th>
+                      <th style="padding:10px; width:110px;">Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% for p in product_results %}
+                    <tr style="border-bottom:1px solid var(--border);">
+                      <td style="padding:10px;">{{ p.product_id }}</td>
+                      <td style="padding:10px;">{{ p.product_name }}</td>
+                      <td style="padding:10px;">{{ p.sku }}</td>
+                      <td style="padding:10px;">{{ "%.2f"|format(p.purchase_price or 0) }}</td>
+
+                      <form method="POST" action="/purchases/items/add">
+                        <input type="hidden" name="product_id" value="{{ p.product_id }}">
+                        <input type="hidden" name="product_id" value="{{ p.product_id }}">
+
+
+                      
+                        <td style="padding:10px;">
+                            <input
+                              type="text"
+                              name="sell_price"
+                              inputmode="decimal"
+                              placeholder="e.g. 2.50"
+                              value="{{ '%.2f'|format(p.unit_price or 0) }}"
+                              required
+                              style="width:120px; padding:8px; border:1px solid var(--border); border-radius:10px;"
+                            >
+                        </td>
+
+                        <td style="padding:10px;">
+                            <input
+                              type="text"
+                              name="quantity"
+                              inputmode="numeric"
+                              pattern="[0-9]*"
+                              placeholder="e.g. 5"
+                              required
+                              style="width:120px; padding:8px; border:1px solid var(--border); border-radius:10px;"
+                            >
+                        </td>
+
+                        <td style="padding:10px;">
+                          <button class="btn btn-outline" type="submit" style="width:90px;">Add</button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% if product_results|length == 0 %}
+                    <tr>
+                      <td colspan="7" style="padding:12px;">
+                        <span class="badge">No products found</span>
+                      </td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Items List -->
+          <div class="card" style="grid-column: 1 / -1;">
+            <h2>📦 Items in This Purchase</h2>
+            <p class="desc">After you add items, the cost and subtotal will appear here.</p>
+
+            {% if error %}
+              <div class="badge" style="background:#fee2e2; color:#991b1b; margin-bottom:12px;">
+                {{ error }}
+              </div>
+            {% endif %}
+
+            <div style="overflow:auto;">
+              <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr style="text-align:left; border-bottom:1px solid var(--border);">
+                    <th style="padding:10px;">Product</th>
+                    <th style="padding:10px;">Qty</th>
+                    <th style="padding:10px;">Unit Cost (Purchase)</th>
+                    <th style="padding:10px;">Subtotal</th>
+                    <th style="padding:10px;">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for it in items %}
+                  <tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:10px;">{{ it.product_name }}</td>
+                    <td style="padding:10px;">{{ it.quantity }}</td>
+                    <td style="padding:10px;">{{ it.unit_cost }}</td>
+                    <td style="padding:10px;">{{ it.subtotal }}</td>
+                    <td style="padding:10px;">
+                      <form method="POST" action="/purchases/items/delete/{{ it.purchaseDetail_id }}" style="display:inline;">
+                        <button class="btn btn-outline" type="submit">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                  {% endfor %}
+
+                  {% if items|length == 0 %}
+                  <tr>
+                    <td colspan="5" style="padding:12px;">
+                      <span class="badge">No items added yet</span>
+                    </td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="stat" style="margin-top:12px;">
+              <span><b>Total</b></span>
+              <span class="pill ok">{{ total_amount }}</span>
+            </div>
+
+            <div class="btn-row" style="margin-top:14px;">
+              <form method="POST" action="/purchases/finish/confirm" style="display:inline;">
+                <button class="btn" type="submit">Finish Purchase</button>
+              </form>
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

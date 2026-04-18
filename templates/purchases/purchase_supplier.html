@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>New Purchase - Supplier</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+      --warning:#f59e0b;
+      --ok:#16a34a;
+    }
+
+    *{
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .layout{
+      display:flex;
+      min-height:100vh;
+    }
+
+    .sidebar{
+      width:260px;
+      background:#111827;
+      color:#fff;
+      padding:18px;
+    }
+
+    .brand{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .sidebar .sub{
+      font-size:12px;
+      color:#cbd5e1;
+      margin-bottom:18px;
+    }
+
+    .nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      color:#e5e7eb;
+      text-decoration:none;
+      margin-bottom:6px;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .nav a:hover,
+    .nav a.active{
+      background:#1f2937;
+      color:#fff;
+    }
+
+    .content{
+      flex:1;
+      padding:22px;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .header h1{
+      font-size:22px;
+      margin:0;
+    }
+
+    .header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+
+    .card h2{
+      font-size:16px;
+      margin:0 0 6px;
+    }
+
+    .desc{
+      color:var(--muted);
+      font-size:13px;
+      margin:0 0 14px;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#fef3c7;
+      color:#92400e;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      color:#fff;
+      background:var(--primary);
+      font-weight:600;
+      font-size:13px;
+      border:none;
+      cursor:pointer;
+    }
+
+    .btn:hover{
+      background:var(--primary2);
+    }
+
+    .btn-outline{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid var(--primary);
+    }
+
+    .btn-outline:hover{
+      background:#eff6ff;
+    }
+
+    .btn-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+
+      <nav class="nav">
+        <a href="/">Dashboard</a>
+        <a href="/customers">Customers</a>
+        <a href="/products">Products</a>
+        <a href="/sales/new">Sales</a>
+        <a href="/purchases">Purchases List</a>
+        <a class="active" href="/purchases/new">New Purchase</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/movements">Stock Movements</a>
+        <a href="/reports">Reports</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <div>
+          <h1>New Purchase</h1>
+          <p> Select Supplier</p>
+        </div>
+        <span class="badge">Step 1</span>
+      </div>
+
+      <section class="grid">
+        <div class="card">
+          <h2>🚚 Supplier</h2>
+          <p class="desc">Choose an existing supplier or add a new one </p>
+
+          {% if supplier %}
+            <p><b>Selected:</b> {{ supplier.supplier_name }}</p>
+
+            <div class="btn-row">
+              <a class="btn btn-outline" href="/purchases/suppliers">Change Supplier</a>
+              <a class="btn" href="/purchases/header">Next</a>
+            </div>
+          {% else %}
+            <span class="badge">No supplier selected</span>
+
+            <div class="btn-row" style="margin-top:12px;">
+              <a class="btn" href="/purchases/suppliers">Select Supplier</a>
+              <a class="btn btn-outline" href="/suppliers/new?from=purchase">Add Supplier</a>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

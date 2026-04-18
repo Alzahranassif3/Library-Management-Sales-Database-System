@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reports | Branch Sales Analytics</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --soft:#f3f4f6;
+    }
+
+    *{box-sizing:border-box; font-family: Arial, sans-serif;}
+    body{margin:0; background:var(--bg); color:var(--text);}
+
+    /* layout */
+    .layout{display:flex; min-height:100vh;}
+    .sidebar{width:260px; background:#111827; color:#fff; padding:18px;}
+    .content{flex:1; padding:22px;}
+
+    /* sidebar */
+    .brand{font-size:18px; font-weight:800; margin-bottom:4px;}
+    .sub{font-size:12px; color:#cbd5e1; margin-bottom:18px;}
+    .nav a{
+      display:block; padding:10px 12px; border-radius:10px;
+      color:#e5e7eb; text-decoration:none; margin-bottom:6px;
+    }
+    .nav a:hover{background:#1f2937;}
+    .nav a.active{background:#1f2937; color:#fff;}
+
+    /* header */
+    .header{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:12px; margin-bottom:16px;
+    }
+    .header h1{font-size:22px; margin:0;}
+    .header p{margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.4;}
+
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      background:var(--card); border:1px solid var(--border);
+      font-size:12px; font-weight:700; color:#374151;
+      white-space:nowrap;
+    }
+
+    /* cards */
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+    .card h2{font-size:16px; margin:0 0 6px;}
+    .desc{color:var(--muted); font-size:13px; margin:0 0 12px; line-height:1.4;}
+
+    .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px;}
+
+    /* buttons */
+    .btn{
+      display:inline-block; padding:10px 14px; border-radius:12px;
+      text-decoration:none; color:#fff; background:var(--primary);
+      font-weight:700; font-size:13px; border:none; cursor:pointer;
+    }
+    .btn:hover{background:var(--primary2);}
+    .btn-outline{
+      background:#fff; color:var(--primary); border:1px solid var(--border);
+    }
+    .btn-outline:hover{background:#eff6ff;}
+
+    /* form */
+    label{font-size:13px; font-weight:700; margin-bottom:6px; display:block;}
+    input{
+      width:100%; padding:10px 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+
+    /* KPI cards */
+    .kpi-title{font-size:12px; color:var(--muted); font-weight:700; margin:0;}
+    .kpi-value{font-size:22px; font-weight:900; margin:6px 0 0;}
+    .kpi-note{font-size:12px; color:var(--muted); margin-top:6px;}
+
+    /* tabs */
+    .tabs{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+    .tab{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:#374151;
+      font-weight:800;
+      font-size:13px;
+      cursor:pointer;
+    }
+    .tab.active{background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;}
+
+    /* tables */
+    table{width:100%; border-collapse:collapse;}
+    th, td{
+      padding:10px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    th{color:var(--muted); font-weight:800;}
+    tbody tr:hover{background:#f9fafb;}
+    .mono{font-variant-numeric: tabular-nums;}
+
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Al-Sarisi Library</div>
+    <div class="sub">Owner Dashboard</div>
+
+    <nav class="nav">
+      <a class="active" href="/">Dashboard</a>
+      <a href="/customers">Customers</a>
+      <a href="/products">Products</a>
+      <a href="/branches">Branch</a>
+      <a href="/branches/managers">Managers</a>
+      <a href="/sales/new">Sales</a>
+      <a href="/purchases">Purchases List</a>
+      <a href="/purchases/new">New Purchase</a>
+      <a href="/stock/movements/log">Stock Movements</a>
+      <a href="/reports/sales-products">Products Reports</a>
+      <a href="/reports/sales-branches" class="active">Branches Sales Reports</a>
+      <a href="/warehouse"> Warehouse Report</a>
+
+      
+    </nav>
+  </aside>
+
+  <!-- content -->
+  <main class="content">
+
+    <div class="header">
+      <div>
+        <h1>📊 Branch Sales Analytics</h1>
+        <p>View revenue and sales activity by branch for the selected month, and highlight the top branch from last month.</p>
+      </div>
+      <div class="chip">Report</div>
+    </div>
+
+    <!-- filters -->
+    <div class="card" style="margin-bottom:14px;">
+      <h2>🔍 Filters</h2>
+      <p class="desc">Select a month to refresh all results on this page.</p>
+
+      <form method="GET" action="/reports/sales-branches">
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+          <div>
+            <label>Month</label>
+            <input type="month" name="month" value="{{ filters.month }}">
+          </div>
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="submit" class="btn">Apply</button>
+          <a href="/reports/sales-branches" class="btn btn-outline">Reset</a>
+        </div>
+      </form>
+    </div>
+
+    
+
+
+
+    <div class="grid" style="margin-bottom:14px;">
+      <div class="card">
+        <p class="kpi-title">Total Revenue (selected month)</p>
+        <div class="kpi-value mono">{{ '%.2f'|format(total_revenue) }}</div>
+        <div class="kpi-note">Sum of branch revenues.</div>
+      </div>
+
+      <div class="card">
+        <p class="kpi-title">Total Orders (selected month)</p>
+        <div class="kpi-value mono">{{ total_orders }}</div>
+        <div class="kpi-note">Orders count across branches.</div>
+      </div>
+
+      <div class="card">
+        <p class="kpi-title">Top Branch (last month)</p>
+        <div class="kpi-value">{{ best_branch_last_month.branch_name if best_branch_last_month else "N/A" }}</div>
+        <div class="kpi-note">Top revenue in {{ last_month_label }}.</div>
+      </div>
+    </div>
+
+    <!-- tabs -->
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" data-target="tab7">Revenue by Branch</button>
+        <button class="tab" data-target="tab13">Monthly Summary</button>
+        <button class="tab" data-target="tab14">Best Branch (Last Month)</button>
+      </div>
+
+      <!-- tab 7 -->
+      <section id="tab7" class="tab-content" style="margin-top:8px;">
+        <h2>Revenue by Branch</h2>
+        <p class="desc">Total revenue per branch for the selected month.</p>
+
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Branch</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if revenue_by_branch and revenue_by_branch|length > 0 %}
+                {% for r in revenue_by_branch %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="strong">{{ r.branch_name }}</td>
+                    <td class="mono">{{ '%.2f'|format(r.revenue or 0) }}</td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="3" style="text-align:center; padding:18px;" class="muted">
+                    No sales data found for this period.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- tab 13 -->
+      <section id="tab13" class="tab-content" style="margin-top:8px; display:none;">
+        <h2>Monthly Summary</h2>
+        <p class="desc">Orders, total quantity, and revenue per branch for the selected month.</p>
+
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Branch</th>
+                <th>Orders</th>
+                <th>Total Qty</th>
+                <th>Total Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if monthly_summary and monthly_summary|length > 0 %}
+                {% for s in monthly_summary %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="strong">{{ s.branch_name }}</td>
+                    <td class="mono">{{ s.orders_count or 0 }}</td>
+                    <td class="mono">{{ s.total_qty or 0 }}</td>
+                    <td class="mono">{{ '%.2f'|format(s.total_revenue or 0) }}</td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="5" style="text-align:center; padding:18px;" class="muted">
+                    No summary data found for this period.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- tab 14 -->
+      <section id="tab14" class="tab-content" style="margin-top:8px; display:none;">
+        <h2>Best Branch (Last Month)</h2>
+        <p class="desc">Top-performing branch by revenue in {{ last_month_label }}.</p>
+
+        {% if best_branch_last_month %}
+          <div class="grid" style="margin-top:12px;">
+            <div class="card" style="background:var(--soft);">
+              <p class="kpi-title">Top Branch</p>
+              <div class="kpi-value">{{ best_branch_last_month.branch_name }}</div>
+              <div class="kpi-note">
+                Revenue: <span class="mono strong">{{ '%.2f'|format(best_branch_last_month.revenue or 0) }}</span>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="muted" style="padding:10px 0;">No data found for last month.</div>
+        {% endif %}
+      </section>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll(".tab");
+  const sections = document.querySelectorAll(".tab-content");
+
+  tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      sections.forEach(s => s.style.display = "none");
+
+      btn.classList.add("active");
+      const id = btn.getAttribute("data-target");
+      document.getElementById(id).style.display = "block";
+    });
+  });
+</script>
+</body>
+</html>

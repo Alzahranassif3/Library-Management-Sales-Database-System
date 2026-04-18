@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Staff</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+    }
+    *{ box-sizing:border-box; font-family: Arial, sans-serif; }
+    body{ margin:0; background:var(--bg); color:var(--text); }
+    .layout{ display:flex; min-height:100vh; }
+    .sidebar{ width:260px; background:#111827; color:#fff; padding:18px; }
+    .brand{ font-size:18px; font-weight:700; margin-bottom:4px; }
+    .sidebar .sub{ font-size:12px; color:#cbd5e1; margin-bottom:18px; }
+    .nav a{ display:block; padding:10px 12px; border-radius:10px; color:#e5e7eb; text-decoration:none; margin-bottom:6px; font-weight:700; font-size:13px; }
+    .nav a:hover,.nav a.active{ background:#1f2937; color:#fff; }
+    .content{ flex:1; padding:22px; }
+    .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .header h1{ font-size:22px; margin:0; }
+    .header p{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .badge{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:700; }
+    .btn{ display:inline-block; padding:10px 14px; border-radius:10px; background:var(--primary); color:#fff; text-decoration:none; font-size:13px; font-weight:600; border:none; cursor:pointer; }
+    .btn:hover{ background:var(--primary2); }
+    .btn-outline{ background:#fff; color:var(--primary); border:1px solid var(--primary); }
+    .btn-outline:hover{ background:#eff6ff; }
+    .btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
+    label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+    input{ width:100%; padding:10px; border-radius:10px; border:1px solid var(--border); margin-bottom:12px; }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+
+      <nav class="nav">
+        <a href="/">Dashboard</a>
+        <a class="active" href="/branches">Branches</a>
+        <a href="/branches/managers">Managers</a>
+        <a href="/movements">Stock Movements</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <div>
+          <h1>Add Staff</h1>
+          <p>Branch: {{ branch.nameBranch }} ({{ branch.city }})</p>
+        </div>
+        <span class="badge">New Staff</span>
+      </div>
+
+      <section class="grid">
+        <div class="card">
+
+          {% if error %}
+            <div class="badge" style="background:#fee2e2; color:#991b1b; margin-bottom:12px;">
+              {{ error }}
+            </div>
+          {% endif %}
+
+          <form method="POST">
+            <input type="hidden" name="branch_id" value="{{ branch.branch_id }}">
+            <input type="hidden" name="back" value="{{ back or ('/branches/' ~ branch.branch_id ~ '/staff') }}">
+
+            <label>First Name *</label>
+            <input type="text" name="first_name" value="{{ form.first_name if form else '' }}" required>
+
+            <label>Last Name *</label>
+            <input type="text" name="last_name" value="{{ form.last_name if form else '' }}" required>
+
+            <label>Position</label>
+            <input type="text" name="positionStaff" value="{{ form.positionStaff if form else '' }}" placeholder="e.g. Cashier / Branch Manager">
+
+            <label>Salary</label>
+            <input type="text" name="salary" value="{{ form.salary if form else '' }}" placeholder="e.g. 2500">
+
+            <label>Phone</label>
+            <input type="text" name="phone" value="{{ form.phone if form else '' }}">
+
+            <label>Email</label>
+            <input type="email" name="email" value="{{ form.email if form else '' }}">
+
+            <label>Hire Date</label>
+            <input type="date" name="hire_date" value="{{ form.hire_date if form else '' }}">
+
+            <div class="btn-row" style="margin-top:16px;">
+              <button type="submit" class="btn">Save Staff</button>
+              <a href="{{ back or ('/branches/' ~ branch.branch_id ~ '/staff') }}" class="btn btn-outline">Cancel</a>
+            </div>
+
+          </form>
+
+        </div>
+      </section>
+    </main>
+
+  </div>
+</body>
+</html>

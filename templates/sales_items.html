@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Add Items</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb;
+      --primary:#2563eb;--primary2:#1d4ed8;
+      --soft:#f8fafc;
+    }
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1000px;margin:30px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    h1{margin:0;font-size:20px}
+    .muted{color:var(--muted);font-size:13px;margin:6px 0 0}
+    label{display:block;margin-top:12px;font-weight:700;font-size:13px}
+    select,input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-top:6px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{display:inline-block;padding:10px 12px;border-radius:10px;text-decoration:none;color:#fff;background:var(--primary);font-weight:600;font-size:13px;border:none;cursor:pointer}
+    .btn:hover{background:var(--primary2)}
+    .btn-outline{
+      background:#fff;color:var(--primary);border:1px solid var(--primary);
+    }
+    .btn-outline:hover{background:#eff6ff}
+
+    table{width:100%;border-collapse:collapse;margin-top:14px}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}
+    th{color:var(--muted);font-weight:700}
+    .total{margin-top:12px;font-weight:800;font-size:16px}
+
+    .alert{
+      margin-top:12px;
+      padding:12px;
+      border:1px dashed var(--border);
+      background:var(--soft);
+      border-radius:12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .actions-cell form{margin:0;}
+    .mini-btn{
+      padding:7px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:700;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Add Items to Order #{{ order.order_id }}</h1>
+    <div class="muted">
+      Customer: {{ order.c_first }} {{ order.c_last }} |
+      Branch: {{ order.nameBranch }} |
+      Staff: {{ order.s_first }} {{ order.s_last }}
+    </div>
+
+    <!-- error message (when qty > available, etc.) -->
+    {% if error %}
+      <div class="alert"><b>note:</b> {{ error }}</div>
+    {% endif %}
+
+    <!-- search input for filtering products in select -->
+    <label>Search product</label>
+    <input id="productSearch" type="text" placeholder="type to search...">
+
+    <form method="post" action="/sales/items/add">
+      <label>Product</label>
+      <select id="productSelect" name="product_id" required>
+        <option value="" disabled selected>Select product</option>
+        {% for p in products %}
+          <option value="{{ p.product_id }}">
+            {{ p.product_name }} ({{ '%.2f'|format(p.unit_price) }})
+          </option>
+        {% endfor %}
+      </select>
+
+      <label>Quantity</label>
+      <input type="number" name="quantity" min="1" required>
+
+      <div class="row">
+        <button class="btn" type="submit">Add Item</button>
+      </div>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Unit Price</th>
+          <th>Subtotal</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in items %}
+          <tr>
+            <!-- show 1,2,3.. for items inside this order -->
+            <td>{{ loop.index }}</td>
+            <td>{{ it.product_name }}</td>
+            <td>{{ it.quantity }}</td>
+            <td>{{ '%.2f'|format(it.unit_price) }}</td>
+            <td>{{ '%.2f'|format(it.subtotal) }}</td>
+
+            <td class="actions-cell">
+              <form method="post" action="/sales/items/delete/{{ it.order_item_id }}">
+                <button class="btn btn-outline mini-btn" type="submit">delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+
+        {% if items|length == 0 %}
+          <tr><td colspan="6" class="muted">No items added yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+    <div class="total">Total: {{ '%.2f'|format(total) }}</div>
+
+    <div class="row" style="margin-top:14px;">
+      <a class="btn" href="/sales/checkout">Finish Order (Checkout)</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // filter select options based on search input
+  const searchInput = document.getElementById("productSearch");
+  const select = document.getElementById("productSelect");
+  const options = Array.from(select.options);
+
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.toLowerCase().trim();
+
+    options.forEach((opt, i) => {
+      if(i === 0) return; // keep first option
+      const txt = opt.text.toLowerCase();
+      opt.hidden = (q && !txt.includes(q));
+    });
+  });
+</script>
+
+</body>
+</html>

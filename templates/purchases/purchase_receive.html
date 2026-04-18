@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Receive Purchase #{{ purchase.purchase_id }}</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#dc2626;
+      --sidebar:#111827;
+    }
+    *{box-sizing:border-box;font-family:Arial,sans-serif;}
+    body{margin:0;background:var(--bg);color:var(--text);}
+
+    .layout{display:flex;min-height:100vh;}
+    .sidebar{
+      width:260px;
+      background:var(--sidebar);
+      color:#fff;
+      padding:18px;
+    }
+    .brand{font-size:18px;font-weight:800;margin-bottom:4px;}
+    .sidebar .sub{color:#cbd5e1;font-size:13px;margin-bottom:14px;}
+    .nav{display:flex;flex-direction:column;gap:6px;}
+    .nav a{
+      color:#cbd5e1;
+      text-decoration:none;
+      padding:10px 12px;
+      border-radius:10px;
+      font-weight:700;
+      font-size:13px;
+    }
+    .nav a:hover{background:rgba(255,255,255,.08);color:#fff;}
+    .nav a.active{background:rgba(37,99,235,.25);color:#fff;}
+
+    .content{flex:1;}
+    .page{max-width:1100px;margin:24px auto;padding:0 16px;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+
+    .header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;}
+    .title{display:flex;flex-direction:column;gap:4px;}
+    .title h1{margin:0;font-size:20px;}
+    .sub{color:var(--muted);font-size:13px;}
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:10px;
+      background:var(--primary);
+      color:#fff;
+      text-decoration:none;
+      font-size:13px;
+      font-weight:700;
+      border:none;
+      cursor:pointer;
+    }
+    .btn:hover{background:var(--primary2);}
+    .btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+    .btn-outline:hover{background:#eff6ff;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:13px;}
+    th{background:#f1f5f9;font-weight:800;}
+    input[type="number"]{width:120px;padding:10px;border-radius:10px;border:1px solid var(--border);}
+    .pill{display:inline-block;font-size:12px;padding:4px 8px;border-radius:999px;font-weight:800;}
+    .pill.ok{background:#dcfce7;color:#166534;}
+    .pill.warn{background:#fef3c7;color:#92400e;}
+    .pill.bad{background:#fee2e2;color:#991b1b;}
+    .msg{margin:10px 0 0;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;}
+    .msg.ok{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+    .msg.err{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;}
+    .footer{margin-top:12px;display:flex;gap:10px;align-items:center;}
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+
+      <nav class="nav">
+        <a href="/">Dashboard</a>
+        <a href="/customers">Customers</a>
+        <a href="/products">Products</a>
+        <a href="/sales/new">Sales</a>
+        <a href="/purchases" class="active">Purchases List</a>
+        <a href="/purchases/new">New Purchase</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/movements">Stock Movements</a>
+        <a href="/reports">Reports</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="page">
+        <div class="card">
+
+          <div class="header">
+            <div class="title">
+              <h1>📥 Receive Purchase #{{ purchase.purchase_id }}</h1>
+              <div class="sub">
+                {{ purchase.supplier_name }} • {{ purchase.nameBranch }} • {{ purchase.purchase_date }}
+              </div>
+            </div>
+            <a class="btn btn-outline" href="/purchases">Back</a>
+          </div>
+
+          {% if request.args.get('success') %}
+            <div class="msg ok"> Receive saved successfully.</div>
+          {% endif %}
+          {% if request.args.get('error') %}
+            <div class="msg err"> {{ request.args.get('error') }}</div>
+          {% endif %}
+
+          <form method="POST" action="/purchases/recive/confirm">
+            <input type="hidden" name="purchase_id" value="{{ purchase.purchase_id }}">
+
+            <div style="overflow:auto; margin-top:12px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Ordered</th>
+                    <th>Received Now</th>
+                    <th>Current Received</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for it in items %}
+                  <tr>
+                    <td>{{ it.product_name }}</td>
+                    <td>{{ it.ordered_qty }}</td>
+
+                    <td>
+                      <input
+                        type="number"
+                        min="0"
+                        max="{{ (it.ordered_qty - it.received_qty) if it.ordered_qty is not none else 0 }}"
+                        name="recv_{{ it.purchaseDetail_id }}"
+                        value="0"
+                      >
+                      <div class="sub" style="margin-top:4px;">
+                        remaining: {{ it.ordered_qty - it.received_qty }}
+                      </div>
+                    </td>
+
+                    <td>{{ it.received_qty }}</td>
+
+                    <td>
+                      {% if it.statusP == 'Received' %}
+                        <span class="pill ok">Received</span>
+                      {% elif it.statusP == 'Partial' %}
+                        <span class="pill warn">Partial</span>
+                      {% else %}
+                        <span class="pill bad">{{ it.statusP }}</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="footer">
+              <button class="btn" type="submit">Confirm Receive</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>

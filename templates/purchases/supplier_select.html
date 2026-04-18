@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Select Supplier</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+      --warning:#f59e0b;
+      --ok:#16a34a;
+    }
+
+    *{
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .layout{
+      display:flex;
+      min-height:100vh;
+    }
+
+    .sidebar{
+      width:260px;
+      background:#111827;
+      color:#fff;
+      padding:18px;
+    }
+
+    .brand{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .sidebar .sub{
+      font-size:12px;
+      color:#cbd5e1;
+      margin-bottom:18px;
+    }
+
+    .nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      color:#e5e7eb;
+      text-decoration:none;
+      margin-bottom:6px;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .nav a:hover,
+    .nav a.active{
+      background:#1f2937;
+      color:#fff;
+    }
+
+    .content{
+      flex:1;
+      padding:22px;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .header h1{
+      font-size:22px;
+      margin:0;
+    }
+
+    .header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+
+    .card h2{
+      font-size:16px;
+      margin:0 0 6px;
+    }
+
+    .desc{
+      color:var(--muted);
+      font-size:13px;
+      margin:0 0 14px;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#fef3c7;
+      color:#92400e;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      color:#fff;
+      background:var(--primary);
+      font-weight:600;
+      font-size:13px;
+      border:none;
+      cursor:pointer;
+      line-height:1;
+    }
+
+    .btn:hover{
+      background:var(--primary2);
+    }
+
+    .btn-outline{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid var(--primary);
+    }
+
+    .btn-outline:hover{
+      background:#eff6ff;
+    }
+
+    .btn-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    input, select{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      margin-bottom:12px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th, td{
+      padding:10px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      font-size:13px;
+      vertical-align:top;
+    }
+
+    th{
+      background:#f1f5f9;
+      font-weight:800;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+
+      <nav class="nav">
+        <a href="/">Dashboard</a>
+        <a href="/customers">Customers</a>
+        <a href="/products">Products</a>
+        <a href="/sales/new">Sales</a>
+        <a class="active" href="/purchases">Purchases List</a>
+        <a href="/purchases/new">New Purchase</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/movements">Stock Movements</a>
+        <a href="/reports">Reports</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <div>
+          <h1>Select Supplier</h1>
+          <p>Choose an existing supplier for this purchase.</p>
+        </div>
+        <span class="badge">Step 1</span>
+      </div>
+
+      <section class="grid">
+        <div class="card">
+          <h2>🔎 Search</h2>
+          <p class="desc">Search by supplier phone</p>
+
+          <form method="GET" action="/purchases/suppliers">
+            <label>Supplier Phone</label>
+            <input type="text" name="phone" placeholder="e.g. 0568635789">
+
+            <div class="btn-row">
+              <button class="btn" type="submit">Search</button>
+              <a class="btn btn-outline" href="/purchases/new">Back</a>
+              <a class="btn btn-outline" href="/suppliers/new?from=purchase">+ Add Supplier</a>
+            </div>
+          </form>
+        </div>
+
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2>🚚 Suppliers List</h2>
+          <p class="desc">Click “Select” to use a supplier.</p>
+
+          <div style="overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Supplier Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for s in suppliers %}
+                <tr>
+                  <td>{{ s.supplier_id }}</td>
+                  <td>{{ s.supplier_name }}</td>
+                  <td>{{ s.contact_phone }}</td>
+                  <td>{{ s.email }}</td>
+                  <td>
+                    <a class="btn btn-outline" href="/suppliers/use/{{ s.supplier_id }}">Select</a>
+                  </td>
+                </tr>
+                {% endfor %}
+
+                {% if suppliers|length == 0 %}
+                <tr>
+                  <td colspan="5" style="padding:12px;">
+                    <span class="badge">No suppliers found</span>
+                    <div class="btn-row" style="margin-top:10px;">
+                      <a class="btn" href="/suppliers/new?from=purchase">Add New Supplier</a>
+                      <a class="btn btn-outline" href="/purchases/new">Back</a>
+                    </div>
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+</body>
+</html>

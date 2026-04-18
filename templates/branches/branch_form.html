@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Branch</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+    }
+    *{ box-sizing:border-box; font-family: Arial, sans-serif; }
+    body{ margin:0; background:var(--bg); color:var(--text); }
+    .layout{ display:flex; min-height:100vh; }
+    .sidebar{ width:260px; background:#111827; color:#fff; padding:18px; }
+    .brand{ font-size:18px; font-weight:700; margin-bottom:4px; }
+    .sidebar .sub{ font-size:12px; color:#cbd5e1; margin-bottom:18px; }
+    .nav a{ display:block; padding:10px 12px; border-radius:10px; color:#e5e7eb; text-decoration:none; margin-bottom:6px; font-weight:700; font-size:13px; }
+    .nav a:hover,.nav a.active{ background:#1f2937; color:#fff; }
+    .content{ flex:1; padding:22px; }
+    .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .header h1{ font-size:22px; margin:0; }
+    .header p{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .badge{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:700; }
+    .btn{ display:inline-block; padding:10px 14px; border-radius:10px; background:var(--primary); color:#fff; text-decoration:none; font-size:13px; font-weight:600; border:none; cursor:pointer; }
+    .btn:hover{ background:var(--primary2); }
+    .btn-outline{ background:#fff; color:var(--primary); border:1px solid var(--primary); }
+    .btn-outline:hover{ background:#eff6ff; }
+    .btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
+    label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+    input{ width:100%; padding:10px; border-radius:10px; border:1px solid var(--border); margin-bottom:12px; }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">Al-Sarisi Library</div>
+      <div class="sub">Owner Dashboard</div>
+
+      <nav class="nav">
+        <a class="active" href="/">Dashboard</a>
+      <a href="/customers">Customers</a>
+      <a href="/products">Products</a>
+      <a class="active" href="/branches">Branch</a>
+      <a href="/branches/managers">Managers</a>
+      <a href="/sales/new">Sales</a>
+      <a href="/purchases">Purchases List</a>
+      <a href="/purchases/new">New Purchase</a>
+      <a href="/stock/movements/log">Stock Movements</a>
+      <a href="/reports/sales-products">Products Reports</a>
+      <a href="/reports/sales-branches">Branches Sales Reports</a>
+      <a href="/warehouse"> Warehouse Report</a>
+    
+        
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <div>
+          <h1>Add Branch</h1>
+          <p>Enter branch information</p>
+        </div>
+        <span class="badge">New Branch</span>
+      </div>
+
+      <section class="grid">
+        <div class="card">
+
+          {% if error %}
+            <div class="badge" style="background:#fee2e2; color:#991b1b; margin-bottom:12px;">
+              {{ error }}
+            </div>
+          {% endif %}
+
+          <form method="POST">
+      
+            <input type="hidden" name="back" value="{{ back or '/branches' }}">
+
+            <label>Branch Name *</label>
+            <input type="text" name="nameBranch" value="{{ form.nameBranch if form else '' }}" required>
+
+            <label>City</label>
+            <input type="text" name="city" value="{{ form.city if form else '' }}" placeholder="e.g. Ramallah">
+
+            <label>Address</label>
+            <input type="text" name="address" value="{{ form.address if form else '' }}">
+
+            <label>Phone *</label>
+            <input type="text" name="phone" value="{{ form.phone if form else '' }}" required>
+
+            <div class="btn-row" style="margin-top:16px;">
+              <button type="submit" class="btn">Save Branch</button>
+              <a href="{{ back or '/branches' }}" class="btn btn-outline">Cancel</a>
+            </div>
+
+          </form>
+
+        </div>
+      </section>
+    </main>
+
+  </div>
+</body>
+</html>

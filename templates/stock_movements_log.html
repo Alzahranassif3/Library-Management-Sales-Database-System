@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock Movements Log</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#dc2626;
+    }
+
+    *{ box-sizing:border-box; font-family: Arial, sans-serif; }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .layout{
+      display:flex;
+      min-height:100vh;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      width:260px;
+      background:#111827;
+      color:#fff;
+      padding:18px;
+    }
+
+    .brand{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .sub{
+      font-size:12px;
+      color:#cbd5e1;
+      margin-bottom:18px;
+    }
+
+    .nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      color:#e5e7eb;
+      text-decoration:none;
+      margin-bottom:6px;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .nav a:hover,
+    .nav a.active{
+      background:#1f2937;
+      color:#fff;
+    }
+
+    /* Content */
+    .content{
+      flex:1;
+      padding:22px;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .header h1{
+      font-size:22px;
+      margin:0;
+    }
+
+    .header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#e0f2fe;
+      color:#075985;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      margin-bottom:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+
+    .card h2{
+      font-size:16px;
+      margin:0 0 6px;
+    }
+
+    .desc{
+      color:var(--muted);
+      font-size:13px;
+      margin:0 0 14px;
+    }
+
+    .pill{
+      display:inline-block;
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:700;
+    }
+
+    .pill.ok{ background:#dcfce7; color:#166534; }
+    .pill.warn{ background:#fef3c7; color:#92400e; }
+    .pill.bad{ background:#fee2e2; color:#991b1b; }
+
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:10px;
+      background:var(--primary);
+      color:#fff;
+      text-decoration:none;
+      font-size:13px;
+      font-weight:600;
+      border:none;
+      cursor:pointer;
+    }
+
+    .btn:hover{ background:var(--primary2); }
+
+    .btn-outline{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid var(--primary);
+    }
+
+    .btn-outline:hover{ background:#eff6ff; }
+
+    label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    input, select{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      margin-bottom:12px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th, td{
+      padding:10px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      font-size:13px;
+      vertical-align:top;
+    }
+
+    th{
+      background:#f1f5f9;
+      font-weight:800;
+    }
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">Al-Sarisi Library</div>
+    <div class="sub">Owner Dashboard</div>
+
+    <nav class="nav">
+      <a class="active" href="/">Dashboard</a>
+      <a href="/customers">Customers</a>
+      <a href="/products">Products</a>
+      <a href="/branches">Branch</a>
+      <a href="/branches/managers">Managers</a>
+      <a href="/sales/new">Sales</a>
+      <a href="/purchases">Purchases List</a>
+      <a href="/purchases/new">New Purchase</a>
+      <a class="active" href="/stock/movements/log">Stock Movements</a>
+      <a href="/reports/sales-products">Products Reports</a>
+      <a href="/reports/sales-branches">Branches Sales Reports</a>
+      <a href="/warehouse"> Warehouse Report</a>
+      
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="content">
+
+    <div class="header">
+      <div>
+        <h1>📋 Stock Movements Log</h1>
+        <p>View all inventory movements and transactions.</p>
+      </div>
+      <span class="badge">{{ movements|length }} Records</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="card">
+      <h2>🔍 Filters</h2>
+      <p class="desc">Filter movements by warehouse, type, or date range.</p>
+
+      <form method="GET" action="/stock/movements/log">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px;">
+
+          <div>
+            <label>Warehouse</label>
+            <select name="warehouse_id">
+              <option value="">All Warehouses</option>
+              {% for w in warehouses %}
+                <option value="{{ w.warehouse_id }}"
+                  {% if filters.warehouse_id == w.warehouse_id|string %}selected{% endif %}>
+                  {{ w.name_warehouse }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label>Movement Type</label>
+            <select name="movement_type">
+              <option value="">All Types</option>
+              <option value="PURCHASE" {% if filters.movement_type == 'PURCHASE' %}selected{% endif %}>PURCHASE</option>
+              <option value="PURCHASE_RECEIVE" {% if filters.movement_type == 'PURCHASE_RECEIVE' %}selected{% endif %}>PURCHASE_RECEIVE</option>
+              <option value="SALE" {% if filters.movement_type == 'SALE' %}selected{% endif %}>SALE</option>
+            </select>
+          </div>
+
+          <div>
+            <label>From Date</label>
+            <input type="date" name="date_from" value="{{ filters.date_from }}">
+          </div>
+
+          <div>
+            <label>To Date</label>
+            <input type="date" name="date_to" value="{{ filters.date_to }}">
+          </div>
+
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:8px;">
+          <button type="submit" class="btn">Apply Filters</button>
+          <a href="/stock/movements/log" class="btn btn-outline">Clear</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>📦 Movement Records</h2>
+      <p class="desc">Complete log of stock movements.</p>
+
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Warehouse</th>
+              <th>Qty</th>
+              <th>Staff</th>
+              <th>Position</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          {% if movements %}
+            {% for m in movements %}
+            <tr>
+              <td>#{{ m.movement_id }}</td>
+              <td>{{ m.movement_date.strftime('%Y-%m-%d %H:%M') if m.movement_date else 'N/A' }}</td>
+
+              <td>
+                {% if m.movement_type in ['PURCHASE','PURCHASE_RECEIVE'] %}
+                  <span class="pill ok">{{ m.movement_type }}</span>
+                {% elif m.movement_type == 'SALE' %}
+                  <span class="pill bad">SALE</span>
+                {% else %}
+                  <span class="pill warn">{{ m.movement_type }}</span>
+                {% endif %}
+              </td>
+
+              <td><strong>{{ m.product_name }}</strong></td>
+              <td>{{ m.sku or 'N/A' }}</td>
+              <td>{{ m.name_warehouse }}</td>
+
+              <td>
+                {% if m.qty_change > 0 %}
+                  <span style="color:green;">+{{ m.qty_change }}</span>
+                {% else %}
+                  <span style="color:red;">{{ m.qty_change }}</span>
+                {% endif %}
+              </td>
+
+              <td>{{ m.first_name }} {{ m.last_name }}</td>
+              <td>{{ m.positionStaff or 'N/A' }}</td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="9" style="text-align:center; padding:20px;">
+                No stock movements found
+              </td>
+            </tr>
+          {% endif %}
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

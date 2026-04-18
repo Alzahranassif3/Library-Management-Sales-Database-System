@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Warehouse</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280;
+      --border:#e5e7eb; --primary:#2563eb; --primary2:#1d4ed8; --danger:#dc2626;
+    }
+    *{ box-sizing:border-box; font-family: Arial, sans-serif; }
+    body{ margin:0; background:var(--bg); color:var(--text); }
+    .layout{ display:flex; min-height:100vh; }
+    .sidebar{ width:260px; background:#111827; color:#fff; padding:18px; }
+    .brand{ font-size:18px; font-weight:700; margin-bottom:4px; }
+    .sidebar .sub{ font-size:12px; color:#cbd5e1; margin-bottom:18px; }
+    .nav a{ display:block; padding:10px 12px; border-radius:10px; color:#e5e7eb; text-decoration:none; margin-bottom:6px; font-weight:700; font-size:13px; }
+    .nav a:hover,.nav a.active{ background:#1f2937; color:#fff; }
+    .content{ flex:1; padding:22px; }
+    .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .header h1{ font-size:22px; margin:0; }
+    .header p{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .note{ font-size:13px; color:var(--muted); margin-top:10px; }
+    table{ width:100%; border-collapse:collapse; margin-top:14px; }
+    th,td{ padding:10px; border-bottom:1px solid var(--border); text-align:left; font-size:13px; }
+    th{ background:#f1f5f9; font-weight:800; }
+    .badge{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:700; }
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">Al-Sarisi Library</div>
+    <div class="sub">Owner Dashboard</div>
+    <nav class="nav">
+      <a class="active" href="/">Dashboard</a>
+      <a href="/customers">Customers</a>
+      <a href="/products">Products</a>
+      <a href="/branches">Branch</a>
+      <a href="/branches/managers">Managers</a>
+      <a href="/sales/new">Sales</a>
+      <a href="/purchases">Purchases List</a>
+      <a href="/purchases/new">New Purchase</a>
+      <a href="/stock/movements/log">Stock Movements</a>
+      <a href="/reports/sales-products">Products Reports</a>
+      <a href="/reports/sales-branches">Branches Sales Reports</a>
+      <a class="active" href="/warehouse"> Warehouse Report</a>      
+      
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="header">
+      <div>
+        <h1>Warehouse Overview</h1>
+
+
+    <div class="card">
+      {% if data and data|length > 0 %}
+        <canvas id="warehouseChart" height="120"></canvas>
+        <div class="note">🔴 Lowest total stock &nbsp; | &nbsp; 🔵 Other warehouses</div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Warehouse</th>
+              <th>Total Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in data %}
+            <tr>
+              <td>{{ r.name_warehouse }}</td>
+              <td>{{ r.total_stock }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <span class="badge">No data found</span>
+        <div class="note">Check inventory table and warehouse records.</div>
+      {% endif %}
+    </div>
+  </main>
+
+</div>
+
+<script id="warehouse-data" type="application/json">
+  {{ (data or []) | tojson }}
+</script>
+
+<script>
+  const rows = JSON.parse(document.getElementById("warehouse-data").textContent);
+
+  if (rows.length > 0) {
+    const labels = rows.map(r => r.name_warehouse);
+    const values = rows.map(r => Number(r.total_stock || 0));
+    const colors = values.map((v, i) => i === 0 ? "#dc2626" : "#2563eb");
+
+    new Chart(document.getElementById("warehouseChart"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{ data: values, backgroundColor: colors }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+</script>
+
+
+</body>
+</html>

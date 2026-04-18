@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Success</title>
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f5f7fb;
+      margin:0;
+      padding:40px;
+    }
+
+    .card{
+      background:white;
+      padding:25px;
+      border-radius:10px;
+      max-width:400px;
+    }
+
+    h3{
+      margin-top:0;
+      color:#2f67ff;
+    }
+
+    ul{
+      list-style:none;
+      padding:0;
+      margin-top:20px;
+    }
+
+    li{
+      margin-bottom:10px;
+    }
+
+    a{
+      text-decoration:none;
+      color:#333;
+      font-size:14px;
+    }
+
+    a:hover{
+      text-decoration:underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h3>{{ message }}</h3>
+
+    <ul>
+      <li><a href="{{ url_for('home') }}">Go to Home</a></li>
+      <li><a href="{{ url_for('customers') }}">View Customers</a></li>
+      <li><a href="{{ url_for('create_customer') }}">Add Another Customer</a></li>
+    </ul>
+  </div>
+
+</body>
+</html>

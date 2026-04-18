@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Create Order - Order Info</title>
+  <style>
+    :root{--bg:#f6f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb;--primary:#2563eb;--primary2:#1d4ed8;}
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:900px;margin:30px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    h1{margin:0;font-size:20px}
+    p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    label{display:block;margin-top:12px;font-weight:700;font-size:13px}
+    select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-top:6px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{display:inline-block;padding:10px 12px;border-radius:10px;text-decoration:none;color:#fff;background:var(--primary);font-weight:600;font-size:13px;border:none;cursor:pointer}
+    .btn:hover{background:var(--primary2)}
+    .btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+    .btn-outline:hover{background:#eff6ff}
+    .note{margin-top:10px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Create Order - Order Info</h1>
+    <p>Select branch first, then choose cashier/branch manager for this sale.</p>
+
+    <!-- 1) اختيار الفرع (POST عشان نرجع نفس الصفحة ونجيب الموظفين) -->
+    <form method="post" action="/sales/order-info">
+      <label>Branch</label>
+      <select name="branch_id" required>
+        <option value="" disabled {% if not selected_branch_id %}selected{% endif %}>Select branch</option>
+        {% for b in branches %}
+          <option value="{{ b.branch_id }}" {% if selected_branch_id and (selected_branch_id|string)==(b.branch_id|string) %}selected{% endif %}>
+            {{ b.nameBranch }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <div class="row">
+        <a class="btn btn-outline" href="/sales/new">Back</a>
+        <button class="btn" type="submit">Load Staff</button>
+      </div>
+    </form>
+
+    <!-- 2) بعد اختيار الفرع، نظهر قائمة الموظفين -->
+    {% if selected_branch_id %}
+      <form method="post" action="/sales/create">
+        <input type="hidden" name="branch_id" value="{{ selected_branch_id }}"/>
+
+        <label style="margin-top:18px;">Staff (Cashier / Branch Manager)</label>
+        <select name="staff_id" required>
+          <option value="" disabled selected>Select staff</option>
+          {% for s in staff %}
+            <option value="{{ s.staff_id }}">
+              {{ s.first_name }} {{ s.last_name }} - {{ s.positionStaff }}
+            </option>
+          {% endfor %}
+        </select>
+
+        {% if staff|length == 0 %}
+          <div class="note">
+            No staff found for this branch with role Cashier / Branch Manager.
+            (Check positionStaff values in DB)
+          </div>
+        {% endif %}
+         <label style="margin-top:12px;">Order Date</label>
+        <input type="datetime-local" name="order_date" required
+            style="width:100%;padding:10px 12px;border:1px solid var(--border);
+                border-radius:10px;margin-top:6px;">
+
+
+        <div class="row">
+          <button class="btn" type="submit" {% if staff|length == 0 %}disabled{% endif %}>Continue</button>
+        </div>
+
+        
+      </form>
+    {% else %}
+      <div class="note">Choose a branch first to load staff.</div>
+    {% endif %}
+
+  </div>
+</div>
+</body>
+</html>

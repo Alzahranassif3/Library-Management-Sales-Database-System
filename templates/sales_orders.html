@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>View Orders</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb;
+      --primary:#2563eb;--primary2:#1d4ed8;
+    }
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:30px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:20px}
+    .muted{color:var(--muted);font-size:13px;margin:6px 0 0}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+    input{width:260px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;}
+    .btn{
+      display:inline-block;padding:10px 12px;border-radius:10px;text-decoration:none;
+      color:#fff;background:var(--primary);font-weight:600;font-size:13px;border:none;cursor:pointer
+    }
+    .btn:hover{background:var(--primary2)}
+    .btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+    .btn-outline:hover{background:#eff6ff}
+    table{width:100%;border-collapse:collapse;margin-top:14px}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}
+    th{color:var(--muted);font-weight:700}
+    .badge{
+      display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;
+      background:#e5e7eb;color:#374151;
+    }
+    .badge.green{background:#dcfce7;color:#166534}
+    .badge.red{background:#fee2e2;color:#991b1b}
+
+    /* details box under each order */
+    .details-box{
+      margin-top:10px;
+      padding:12px;
+      border:1px dashed var(--border);
+      border-radius:12px;
+      background:#fff;
+    }
+    .mini-table{width:100%;border-collapse:collapse;margin-top:10px}
+    .mini-table th,.mini-table td{padding:8px;border-bottom:1px solid var(--border);font-size:13px}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <div class="top">
+      <div>
+        <h1>{{ page_title or "Orders" }}</h1>
+        <div class="muted">{{ page_desc or "view sales orders created in the system." }}</div>
+
+      </div>
+      <a class="btn btn-outline" href="/">Back to Dashboard</a>
+    </div>
+
+    <!-- search -->
+    <form class="row" method="get" action="/sales/orders">
+      <input type="text" name="q" value="{{ q }}" placeholder="search by order id or name...">
+      <button class="btn" type="submit">Search</button>
+      <a class="btn btn-outline" href="/sales/orders">Clear</a>
+    </form>
+
+    <!-- orders table -->
+    <table>
+      <thead>
+        <tr>
+          <th>order id</th>
+          <th>date</th>
+          <th>customer</th>
+          <th>staff</th>
+          <th>branch</th>
+          <th>total</th>
+          <th>payment</th>
+          <th>bill</th>
+          <th>details</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for o in orders %}
+          <!-- main row -->
+          <tr>
+            <td>{{ o.order_id }}</td>
+            <td>{{ o.order_date }}</td>
+            <td>{{ o.c_first }} {{ o.c_last }}</td>
+            <td>{{ o.s_first }} {{ o.s_last }}</td>
+            <td>{{ o.nameBranch }}</td>
+
+            <td>
+              {% if o.total_amount %}
+                {{ o.total_amount }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+
+            <td>
+              {% if o.payment_status == "Paid" %}
+                <span class="badge green">paid</span>
+              {% elif o.payment_status == "Unpaid" %}
+                <span class="badge red">unpaid</span>
+              {% else %}
+                <span class="badge">no bill</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if o.bill_id %}
+                #{{ o.bill_id }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+
+            <td>
+              <button class="btn btn-outline" style="padding:8px 10px;" type="button"
+                      onclick="toggleDetails('{{ o.order_id }}', this)">
+                show
+              </button>
+            </td>
+          </tr>
+
+          <!-- details row (hidden) -->
+          <tr id="details-{{ o.order_id }}" style="display:none;">
+            <td colspan="9">
+              <div class="details-box">
+                <b>items for order #{{ o.order_id }}</b>
+
+                <table class="mini-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>product</th>
+                      <th>qty</th>
+                      <th>unit price</th>
+                      <th>subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% set its = items_by_order.get(o.order_id, []) %}
+                    {% for it in its %}
+                      <tr>
+                        <td>{{ it.order_item_id }}</td>
+                        <td>{{ it.product_name }}</td>
+                        <td>{{ it.quantity }}</td>
+                        <td>{{ it.unit_price }}</td>
+                        <td>{{ it.subtotal }}</td>
+                      </tr>
+                    {% endfor %}
+
+                    {% if its|length == 0 %}
+                      <tr><td colspan="5" class="muted">no items.</td></tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+
+        {% if orders|length == 0 %}
+          <tr><td colspan="9" class="muted">no orders found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<script>
+  function toggleDetails(orderId, btn){
+    const row = document.getElementById("details-" + orderId);
+    if(!row) return;
+
+    const isHidden = (row.style.display === "none" || row.style.display === "");
+    row.style.display = isHidden ? "table-row" : "none";
+
+    // change button text
+    btn.textContent = isHidden ? "hide" : "show";
+  }
+</script>
+</body>
+</html>

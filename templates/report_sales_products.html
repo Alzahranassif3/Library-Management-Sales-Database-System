@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reports | Product Sales Analytics</title>
+
+  <style>
+  :root{
+    --bg:#f6f7fb;
+    --card:#ffffff;
+    --text:#111827;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+    --primary:#2563eb;
+    --primary2:#1d4ed8;
+    --chip:#eef2ff;
+    --chipText:#1d4ed8;
+  }
+
+  *{box-sizing:border-box; font-family: Arial, sans-serif;}
+  body{margin:0; background:var(--bg); color:var(--text);}
+
+  .layout{display:flex; min-height:100vh;}
+  .sidebar{width:260px; background:#111827; color:#fff; padding:18px;}
+  .content{flex:1; padding:22px;}
+
+  .brand{font-size:18px; font-weight:800; margin-bottom:4px;}
+  .sub{font-size:12px; color:#cbd5e1; margin-bottom:18px;}
+  .nav a{
+    display:block; padding:10px 12px; border-radius:10px;
+    color:#e5e7eb; text-decoration:none; margin-bottom:6px;
+  }
+  .nav a:hover{background:#1f2937;}
+  .nav a.active{background:#1f2937; color:#fff;}
+
+  .header{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px;}
+  .header h1{font-size:22px; margin:0;}
+  .header p{margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.4;}
+
+  .chip{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 12px; border-radius:999px;
+    background:var(--chip); color:var(--chipText);
+    font-size:12px; font-weight:800; white-space:nowrap;
+    border:1px solid #dbeafe;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:16px;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap:16px;
+  }
+
+  .kpi-title{color:var(--muted); font-size:12px; font-weight:800; letter-spacing:.2px; text-transform:uppercase;}
+  .kpi-value{font-size:22px; font-weight:900; margin-top:6px;}
+  .kpi-sub{color:var(--muted); font-size:13px; margin-top:6px;}
+
+  .btn{
+    display:inline-block; padding:10px 14px; border-radius:12px;
+    text-decoration:none; color:#fff; background:var(--primary);
+    font-weight:800; font-size:13px; border:none; cursor:pointer;
+  }
+  .btn:hover{background:var(--primary2);}
+  .btn-outline{
+    background:#fff; color:var(--primary); border:1px solid #bfdbfe;
+  }
+  .btn-outline:hover{background:#eff6ff;}
+
+  input, select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    margin-bottom:12px;
+    background:#fff;
+  }
+  label{font-size:13px; font-weight:800; margin-bottom:6px; display:block; color:#374151;}
+
+  table th, table td{
+    padding:10px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+    font-size:13px;
+    white-space:nowrap;
+  }
+  table th{color:var(--muted); font-weight:900;}
+  tbody tr:hover{background:#f9fafb;}
+
+  /* tabs */
+  .tabs{display:flex; gap:8px; flex-wrap:wrap;}
+  .tab{
+    border:1px solid var(--border);
+    background:#fff;
+    padding:10px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:900;
+    color:#374151;
+  }
+  .tab.active{
+    background:#eff6ff;
+    border-color:#bfdbfe;
+    color:var(--primary);
+  }
+  .tab-content{margin-top:14px;}
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Al-Sarisi Library</div>
+    <div class="sub">Owner Dashboard</div>
+
+    <nav class="nav">
+      <a class="active" href="/">Dashboard</a>
+      <a href="/customers">Customers</a>
+      <a href="/products">Products</a>
+      <a href="/branches">Branch</a>
+      <a href="/branches/managers">Managers</a>
+      <a href="/sales/new">Sales</a>
+      <a href="/purchases">Purchases List</a>
+      <a href="/purchases/new">New Purchase</a>
+      <a href="/stock/movements/log">Stock Movements</a>
+      <a href="/reports/sales-products" class="active">Products Reports</a>
+      <a href="/reports/sales-branches">Branches Sales Reports</a>
+      <a href="/warehouse"> Warehouse Report</a>
+
+      
+      
+    </nav>
+  </aside>
+
+  <!-- content -->
+  <main class="content">
+
+    <!-- header -->
+    <div class="header">
+      <div>
+        <h1>📊 Product Sales Analytics</h1>
+        <p>
+          Review product performance for a selected month:
+          <strong>Top 3</strong>, <strong>best in category</strong>, and <strong>not sold recently</strong>.
+        </p>
+      </div>
+      
+    </div>
+
+    <!-- filters -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+        <div>
+          <h2 style="margin:0 0 6px;">🔎 Filters</h2>
+          <p style="margin:0; color:var(--muted); font-size:13px;">
+            Choose a month to refresh results. Optionally narrow by branch, category, or days.
+          </p>
+        </div>
+      </div>
+
+      <form method="GET" action="/reports/sales-products" style="margin-top:14px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;">
+
+          <div>
+            <label>Branch (optional)</label>
+            <select name="branch_id">
+              <option value="">All branches</option>
+              {% for b in branches %}
+                <option value="{{ b.branch_id }}"
+                  {% if filters.branch_id == b.branch_id|string %}selected{% endif %}>
+                  {{ b.nameBranch }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label>Month</label>
+            <input type="month" name="month" value="{{ filters.month }}">
+          </div>
+
+          <div>
+            <label>Category (for “Best in Category”)</label>
+            <select name="category_id">
+              <option value="">Select category</option>
+              {% for c in categories %}
+                <option value="{{ c.category_id }}"
+                  {% if filters.category_id == c.category_id|string %}selected{% endif %}>
+                  {{ c.nameCat }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label>Not sold within (days)</label>
+            <input type="number" name="days" min="1" value="{{ filters.days }}">
+          </div>
+
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="submit" class="btn">Apply</button>
+          <a href="/reports/sales-products" class="btn btn-outline">Reset</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid" style="margin-bottom:16px;">
+
+      <div class="card">
+        <div class="kpi-title">Best in Category</div>
+        {% if filters.category_id and best_in_category %}
+          <div class="kpi-value">{{ best_in_category.product_name }}</div>
+          <div class="kpi-sub">Sold quantity: <strong>{{ best_in_category.total_qty }}</strong></div>
+        {% elif filters.category_id and not best_in_category %}
+          <div class="kpi-value">No result</div>
+          <div class="kpi-sub">No sales for this category in the selected month.</div>
+        {% else %}
+          <div class="kpi-value">Select a category</div>
+          <div class="kpi-sub">Then press <strong>Apply</strong> to compute the best-selling product.</div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <div class="kpi-title">Top 3 (selected month)</div>
+        <div class="kpi-value">{{ top3|length }} items</div>
+        <div class="kpi-sub">Ranked by total sold quantity.</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-title">Not Sold Recently</div>
+        <div class="kpi-value">{{ not_sold_count }}</div>
+        <div class="kpi-sub">Products with no sales in the last <strong>{{ filters.days }}</strong> days.</div>
+      </div>
+
+    </div>
+
+    <!-- tabs -->
+    <div class="card">
+      <div class="tabs">
+        <button type="button" class="tab active" onclick="showTab('tab9')">Top 3</button>
+        <button type="button" class="tab" onclick="showTab('tab8')">Best in Category</button>
+        <button type="button" class="tab" onclick="showTab('tab15')">Not Sold</button>
+      </div>
+
+      <!-- tab 9 -->
+      <div id="tab9" class="tab-content">
+        <h2 style="margin:12px 0 6px;">🏆 Top 3 Bestselling Products</h2>
+        <p style="margin:0; color:var(--muted); font-size:13px;">Based on total sold quantity within the selected month.</p>
+
+        <div style="overflow:auto; margin-top:12px;">
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Product</th>
+                <th>Total Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% if top3 %}
+              {% for r in top3 %}
+                <tr>
+                  <td>#{{ loop.index }}</td>
+                  <td><strong>{{ r.product_name }}</strong></td>
+                  <td>{{ r.total_qty }}</td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="3" style="text-align:center; padding:20px;">No data for this month.</td>
+              </tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- tab 8 -->
+      <div id="tab8" class="tab-content" style="display:none;">
+        <h2 style="margin:12px 0 6px;">🎯 Best-selling Product in a Category</h2>
+        <p style="margin:0; color:var(--muted); font-size:13px;">
+          Pick a category in the filters, then press <strong>Apply</strong>.
+        </p>
+
+        <div class="card" style="margin-top:12px;">
+          {% if not filters.category_id %}
+            <p style="margin:0; color:var(--muted); font-size:13px;">No category selected yet.</p>
+          {% elif best_in_category %}
+            <div style="overflow:auto;">
+              <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Total Qty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>{{ best_in_category.product_name }}</strong></td>
+                    <td>{{ best_in_category.category }}</td>
+                    <td>{{ best_in_category.total_qty }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top:14px;">
+              <p style="margin:0 0 8px; color:var(--muted); font-size:13px;">Visual (Qty)</p>
+              <div class="bar-row">
+                <div class="bar-label">{{ best_in_category.product_name }}</div>
+                <div class="bar-track"><span class="bar-fill" style="width:100%;"></span></div>
+                <div class="bar-val">{{ best_in_category.total_qty }}</div>
+              </div>
+            </div>
+          {% else %}
+            <p style="margin:0; color:var(--muted); font-size:13px;">No sales found for this category in the selected month.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- tab 15 -->
+      <div id="tab15" class="tab-content" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-top:12px;">
+          <div>
+            <h2 style="margin:0 0 6px;">🕒 Products Not Sold Recently</h2>
+            <p style="margin:0; color:var(--muted); font-size:13px;">
+              Items with no sales in the last <strong>{{ filters.days }}</strong> days (branch optional).
+            </p>
+          </div>
+          <span class="chip">{{ not_sold_count }} products</span>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <div style="overflow:auto;">
+            <table style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>SKU</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if not_sold %}
+                  {% for p in not_sold %}
+                    <tr>
+                      <td>#{{ loop.index }}</td>
+                      <td><strong>{{ p.product_name }}</strong></td>
+                      <td>{{ p.category }}</td>
+                      <td>{{ p.sku or 'N/A' }}</td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="4" style="text-align:center; padding:20px;">
+                      No products found (all products have sales in this period).
+                    </td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function showTab(id){
+    document.getElementById('tab9').style.display = 'none';
+    document.getElementById('tab8').style.display = 'none';
+    document.getElementById('tab15').style.display = 'none';
+    document.getElementById(id).style.display = 'block';
+
+    var tabs = document.querySelectorAll('.tab');
+    tabs.forEach(function(t){ t.classList.remove('active'); });
+
+    if(id === 'tab9') tabs[0].classList.add('active');
+    if(id === 'tab8') tabs[1].classList.add('active');
+    if(id === 'tab15') tabs[2].classList.add('active');
+  }
+</script>
+
+</body>
+</html>
