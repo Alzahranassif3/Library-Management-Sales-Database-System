@@ -54,16 +54,21 @@ It handles inventory, sales, suppliers, customers, and staff operations efficien
 
 ## 📂 Project Structure
 
-```id="6jzv71"
-backend/
-frontend/
-database/
-report/
-README.md
-```
+- templates/      # HTML files
+- static/         # CSS, JS, images
+- app.py          # Main application
+- db.py           # Database logic
+- schema_1220168.sql  # Database schema
+- ERD.pdf         # Database diagram
+- Report.pdf      # Project report
 
 ---
-
 ## 👩‍💻 Author
 
 AlZahra Ahmad Nassif
+
+---
+## 📁 Full Project Files
+Due to size limitations, full project files are available here:
+(https://drive.google.com/file/d/1L7TYrawgOyMERb7KDkA_xWzKjQJlhyGp/view)
+
