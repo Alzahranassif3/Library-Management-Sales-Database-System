@@ -31,7 +31,7 @@ It handles inventory, sales, suppliers, customers, and staff operations efficien
 * Designed using ER modeling
 * Contains 14+ relational tables
 * Normalized up to **Third Normal Form (3NF)**
-* Includes complex relationships (one-to-many, ternary)
+* Includes complex relationships 
 
 ---
 
