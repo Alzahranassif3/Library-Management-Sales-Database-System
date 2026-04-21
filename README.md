@@ -62,13 +62,5 @@ It handles inventory, sales, suppliers, customers, and staff operations efficien
 - ERD.pdf         # Database diagram
 - Report.pdf      # Project report
 
----
-## 👩‍💻 Author
 
-AlZahra Ahmad Nassif
-
----
-## 📁 Full Project Files
-Due to size limitations, full project files are available here:
-(https://drive.google.com/file/d/1L7TYrawgOyMERb7KDkA_xWzKjQJlhyGp/view)
 
